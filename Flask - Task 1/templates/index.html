@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Name Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Name Analyzer</h1>
+
+        <p class="hint">Use the form or add <span>?user=YourName</span> to the URL.</p>
+
+        <form method="GET">
+            <input aria-label="Name input" type="text" name="user" placeholder="Enter your name" value="{{ request.values.get('user','') }}" maxlength="80">
+            <button aria-label="Analyze name" type="submit">Analyze</button>
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if result %}
+        <div class="result">
+            <p><strong>Original:</strong> {{ result.original }}</p>
+            <p><strong>Uppercase:</strong> {{ result.uppercase }}</p>
+            <p><strong>Lowercase:</strong> {{ result.lowercase }}</p>
+            <p><strong>Reversed:</strong> {{ result.reversed }}</p>
+            <p><strong>Length:</strong> {{ result.length }}</p>
+            <p><strong>Words:</strong> {{ result.words }}</p>
+            <p><strong>Title Case:</strong> {{ result.titlecase }}</p>
+            <p><strong>Vowels:</strong> {{ result.vowels }}</p>
+            <p><strong>Consonants:</strong> {{ result.consonants }}</p>
+            <p><strong>Digits:</strong> {{ result.digits }}</p>
+            <p><strong>Spaces:</strong> {{ result.spaces }}</p>
+            <p><strong>Unique Characters:</strong> {{ result.unique_characters }}</p>
+            <p><strong>Repeating Characters:</strong>
+                {% if result.repeating_characters %}
+                    {% for k,v in result.repeating_characters.items() %}
+                        {{ k }} ({{ v }}){% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    none
+                {% endif %}
+            </p>
+            <p><strong>Palindrome:</strong> {{ result.is_palindrome }}</p>
+            <p><strong>Strength:</strong> {{ result.strength_label }} ({{ result.strength_score }})</p>
+            <p><strong>Time:</strong> {{ result.timestamp }}</p>
+            <p class="share-row"><strong>Shareable Link:</strong> <a id="share-link" href="{{ result.share_link }}">{{ result.share_link }}</a>
+                <button type="button" id="copy-btn">Copy</button>
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
+<script>
+    const copyBtn = document.getElementById('copy-btn');
+    const shareLink = document.getElementById('share-link');
+    if (copyBtn && shareLink) {
+        copyBtn.addEventListener('click', async () => {
+            const link = shareLink.href;
+            try {
+                await navigator.clipboard.writeText(link);
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => copyBtn.textContent = 'Copy', 1600);
+            } catch (err) {
+                copyBtn.textContent = 'Press Ctrl+C';
+                setTimeout(() => copyBtn.textContent = 'Copy', 1600);
+            }
+        });
+    }
+</script>
+</body>
+</html>
