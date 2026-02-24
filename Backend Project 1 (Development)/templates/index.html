@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Regex Tester</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="page">
+    <header class="hero">
+        <div>
+            <p class="eyebrow">Regex Playground</p>
+            <h1>Advanced Regex Tester</h1>
+            <p class="lede">Enter a pattern, choose flags, and instantly see every match with highlighted context and match details.</p>
+        </div>
+        <div class="pill">Powered by Deepika Gandla</div>
+    </header>
+
+    <main class="layout">
+        <section class="card">
+            <div class="card-header">
+                <div>
+                    <h2>Input</h2>
+                    <p class="muted">Type a regex pattern and a test string. Toggle flags to adjust matching.</p>
+                </div>
+                <div class="hint">Tip: Use <code>(...)</code> for groups and <code>|</code> for alternation.</div>
+            </div>
+            <div class="preset-bar">
+                <div class="preset-label">Try a preset:</div>
+                <div class="preset-buttons">
+                    <button type="button" class="ghost" data-pattern="hello" data-text="Hello world, hello again" data-ignore="on" data-global="on">Simple word</button>
+                    <button type="button" class="ghost" data-pattern="\b([\w.+-]+)@([\w-]+\.[\w.-]+)" data-text="Reach me at jane.doe@example.com or admin@test.co" data-global="on">Email groups</button>
+                    <button type="button" class="ghost" data-pattern="https?://\S+" data-text="Links: https://example.com and http://test.dev/page" data-global="on">URLs</button>
+                    <button type="button" class="ghost" data-pattern="de{1,2}pika" data-text="deepikagandla loves regex" data-global="on" data-ignore="on">Name variant</button>
+                </div>
+            </div>
+            <form method="POST" action="/" class="form-grid">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label class="field">
+                    <span>Regular Expression</span>
+                    <input type="text" name="regex_pattern" value="{{ regex_pattern }}" placeholder="e.g. (hello|hi)" required>
+                </label>
+
+                <div class="field flags">
+                    <span>Flags</span>
+                    <div class="flag-options">
+                        <label><input type="checkbox" name="ignore_case" {% if ignore_case_checked %}checked{% endif %}> Ignore Case (i)</label>
+                        <label><input type="checkbox" name="global_search" {% if global_search_checked %}checked{% endif %}> Global (g)</label>
+                    </div>
+                </div>
+
+                <label class="field">
+                    <span>Test String</span>
+                    <textarea name="test_string" rows="6" placeholder="Paste or type the text to test" required>{{ test_string }}</textarea>
+                </label>
+
+                <div class="actions">
+                    <button type="submit">Run Regex</button>
+                    <div class="badge">Live results below</div>
+                </div>
+            </form>
+
+            {% if error %}
+                <div class="alert error">{{ error }}</div>
+            {% elif test_string and regex_pattern and not matches %}
+                <div class="alert warn">No matches found.</div>
+            {% endif %}
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div>
+                    <h2>Highlighted Matches</h2>
+                    <p class="muted">Matched segments are wrapped in yellow for quick scanning.</p>
+                </div>
+            </div>
+            <div class="highlight-box">
+                {% if highlighted_text %}
+                    {{ highlighted_text|safe }}
+                {% else %}
+                    <span class="muted">Run a regex to see highlighted output here.</span>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div>
+                    <h2>Match Details</h2>
+                    <p class="muted">Start and end positions are zero-based; groups show tuple output.</p>
+                </div>
+            </div>
+            <div class="table-wrap">
+                {% if matches %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Match</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Groups</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in matches %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ m.match }}</td>
+                            <td>{{ m.start }}</td>
+                            <td>{{ m.end }}</td>
+                            <td>{{ m.groups }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="muted">Run a regex to see structured results.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+// Lightweight preset loader to help users explore quickly
+document.querySelectorAll('.preset-buttons button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const pattern = btn.getAttribute('data-pattern') || '';
+        const text = btn.getAttribute('data-text') || '';
+        const ignore = btn.getAttribute('data-ignore');
+        const global = btn.getAttribute('data-global');
+
+        const patternInput = document.querySelector('input[name="regex_pattern"]');
+        const textArea = document.querySelector('textarea[name="test_string"]');
+        const ignoreBox = document.querySelector('input[name="ignore_case"]');
+        const globalBox = document.querySelector('input[name="global_search"]');
+
+        if (patternInput) patternInput.value = pattern;
+        if (textArea) textArea.value = text;
+        if (ignoreBox) ignoreBox.checked = Boolean(ignore);
+        if (globalBox) globalBox.checked = Boolean(global);
+    });
+});
+</script>
+
+</body>
+</html>
