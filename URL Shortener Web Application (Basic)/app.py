@@ -71,7 +71,7 @@ def home():
 
 @app.route('/history')
 def history():
-    # Fetch all URLs from the database using ORM
+    
     all_urls = URLMap.query.all()
     return render_template('history.html', urls=all_urls)
 
