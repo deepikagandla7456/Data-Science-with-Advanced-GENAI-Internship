@@ -56,7 +56,7 @@ def run_pipeline():
 
     # 3. Text Embedding (TF-IDF Feature Extraction)
     print("Vectorizing text...")
-    vectorizer = TfidfVectorizer(max_features=5000)
+    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1,2))
     X = vectorizer.fit_transform(df['Cleaned_Text'])
     y = df['Sentiment']
 
@@ -65,15 +65,17 @@ def run_pipeline():
 
     # 4. Modeling Approach (Logistic Regression)
     print("Training model...")
-    model = LogisticRegression(max_iter=1000)
+    model = LogisticRegression(max_iter=1000, class_weight='balanced')
     model.fit(X_train, y_train)
 
     # 5. Evaluation (F1-Score)
     y_pred = model.predict(X_test)
-    f1 = f1_score(y_test, y_pred)
+    f1_macro = f1_score(y_test, y_pred, average='macro')
+    f1_weighted = f1_score(y_test, y_pred, average='weighted')
     
     print("\n--- Model Evaluation ---")
-    print(f"F1-Score: {f1:.4f}")
+    print(f"Macro F1-Score: {f1_macro:.4f}")
+    print(f"Weighted F1-Score: {f1_weighted:.4f}")
     print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
     # Save artifacts for deployment

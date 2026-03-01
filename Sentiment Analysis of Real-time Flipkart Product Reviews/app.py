@@ -42,10 +42,14 @@ def process_input(text):
 st.title("🛍️ Sentiment Analysis of Real-time Flipkart Product Reviews")
 st.write("Analyze the sentiment of customer reviews in real-time.")
 
+st.subheader("Model Performance")
+st.write(f"Macro F1 Score: {0.7864:.4f}")
+st.write(f"Weighted F1 Score: {0.8622:.4f}")
+
 if model is None or vectorizer is None:
     st.error("Model files not found! Please run train_model.py first to generate the .pkl files.")
 else:
-    user_review = st.text_area("Paste a review here:", placeholder="The build quality is excellent and it arrived on time.")
+    user_review = st.text_area("Paste a review here:", placeholder="Example: The product quality is good but delivery was late.")
 
     if st.button("Predict Sentiment", type="primary"):
         if not user_review.strip():
