@@ -1,0 +1,24 @@
+artifact_path: file:D:/OneDrive/Desktop/Innomatics Research Labs/Tasks/Using MLflow
+  for Experiment Tracking and Model Management/mlruns/1/models/m-c20ff2d14437489981a32401b97245e6/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.13.5
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.4.0
+    skops_trusted_types: null
+mlflow_version: 3.10.0
+model_id: m-c20ff2d14437489981a32401b97245e6
+model_size_bytes: 28690
+model_uuid: m-c20ff2d14437489981a32401b97245e6
+prompts: null
+run_id: 6b7dfb4e373b49e59c08e583f0bf8170
+utc_time_created: '2026-03-01 16:53:44.922927'
